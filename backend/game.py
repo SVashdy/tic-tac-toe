@@ -6,6 +6,7 @@ class TicTacToeGame:
         self.board = [["" for _ in range(3)] for _ in range(3)]
         self.current_player = "X"
         self.winner = None
+        self.draw = False
 
     def make_move(self, player, move):
         """
@@ -19,6 +20,8 @@ class TicTacToeGame:
             self.board[x][y] = player
             if self.check_winner(player):
                 self.winner = player
+            elif self.check_draw():
+                self.draw = True
             else:
                 self.current_player = "O" if player == "X" else "X"
 
@@ -34,3 +37,14 @@ class TicTacToeGame:
         if all([self.board[i][i] == player for i in range(3)]) or all([self.board[i][2 - i] == player for i in range(3)]):
             return True
         return False
+
+    def check_draw(self):
+        """
+        Handles draw of the game.
+        :return:
+        """
+        for row in self.board:
+            if "" in row:
+                return False
+        print("It's a draw!")
+        return True

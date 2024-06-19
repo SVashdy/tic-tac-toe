@@ -2,13 +2,15 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 
 const App = () => {
-    // Setting the states to handle the game logic
+    // State to manage the board, player, current player, winner, draw state, and WebSocket connection
     const [board, setBoard] = useState([["", "", ""], ["", "", ""], ["", "", ""]]);
     const [player, setPlayer] = useState("X");
     const [currentPlayer, setCurrentPlayer] = useState("X");
-    const [winner, setWinner] = useState(null);
+    const [winner, setWinner] = useState(null);  // State to track the winner
+    const [draw, setDraw] = useState(false);  // State to track draw
     const [ws, setWs] = useState(null);
 
+    // Function to establish WebSocket connection
     const connectWebSocket = () => {
         const websocket = new WebSocket("ws://localhost:8000/ws");
 
@@ -24,6 +26,9 @@ const App = () => {
             if (data.winner) {
                 setWinner(data.winner);
             }
+            if (data.draw) {
+                setDraw(data.draw);
+            }
         };
 
         websocket.onerror = (error) => {
@@ -38,22 +43,27 @@ const App = () => {
         setWs(websocket);
     };
 
+    // useEffect to establish WebSocket connection on component mount
     useEffect(() => {
         connectWebSocket();
     }, []);
 
+    // useEffect to display alert when there's a winner or a draw
     useEffect(() => {
         if (winner) {
             alert(`${winner} wins!`);
+        } else if (draw) {
+            alert(`It's a draw!`);
         }
-    }, [winner]);
+    }, [winner, draw]);
 
+    // Function to handle making a move
     const makeMove = (x, y) => {
-        if (winner) {
+        if (winner || draw) {
             console.log("Game over, cannot make a move");
             return;
         }
-        if (!ws || ws.readyState !== WebSocket.OPEN) {  // Handling disconnection of websocket
+        if (!ws || ws.readyState !== WebSocket.OPEN) {
             console.log("Cannot send move: WebSocket not open");
         } else if (board[x][y] !== "") {
             console.log("Cannot send move: Invalid move, cell is already occupied");

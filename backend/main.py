@@ -28,7 +28,8 @@ async def send_game_state():
         await client.send_json({
             "board": game.board,
             "currentPlayer": game.current_player,
-            "winner": game.winner
+            "winner": game.winner,
+            "draw": game.draw
         })
 
 
@@ -49,7 +50,8 @@ async def websocket_endpoint(websocket: WebSocket):
             print("Message received:", data)  # Would use logging in a real-world setting
             move = data.get("move")
             player = data.get("player")
-            if move and player and not game.winner:  # Don't accept moves if the game is already won
+            if move and player and not game.winner and not game.draw:  # Don't accept moves if the game is already
+                # won or drawn
                 game.make_move(player, move)
                 await send_game_state()
     except WebSocketDisconnect:
