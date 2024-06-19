@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import './App.css'; // Ensure you import the CSS file
+import './App.css';
 
 const App = () => {
+    // Setting the states to handle the game logic
     const [board, setBoard] = useState([["", "", ""], ["", "", ""], ["", "", ""]]);
     const [player, setPlayer] = useState("X");
     const [currentPlayer, setCurrentPlayer] = useState("X");
-    const [winner, setWinner] = useState(null);  // New state to track the winner
+    const [winner, setWinner] = useState(null);
     const [ws, setWs] = useState(null);
 
     const connectWebSocket = () => {
@@ -52,7 +53,7 @@ const App = () => {
             console.log("Game over, cannot make a move");
             return;
         }
-        if (!ws || ws.readyState !== WebSocket.OPEN) {
+        if (!ws || ws.readyState !== WebSocket.OPEN) {  // Handling disconnection of websocket
             console.log("Cannot send move: WebSocket not open");
         } else if (board[x][y] !== "") {
             console.log("Cannot send move: Invalid move, cell is already occupied");
